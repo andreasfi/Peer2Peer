@@ -29,7 +29,7 @@ public class Server {
 		PrintWriter pout;
 		Scanner sc; 
 		int i =0;
-		String interfaceName = "eth1";
+		String interfaceName = "192.168.108.10";
 
 		try {
 
@@ -77,14 +77,10 @@ public class Server {
 				pout.println(message);
 				pout.flush();		
 				
-				
 		        message_distant = buffin.readLine();
 
-		        System.out.println("Response: "+message_distant);
-		        
+		        System.out.println("Response: "+message_distant);   
 			}
-			
-			
 
 			//Then die
 			System.out.println("Now dying");
