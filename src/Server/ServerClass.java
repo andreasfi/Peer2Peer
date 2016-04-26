@@ -87,7 +87,7 @@ public class ServerClass {
 
 				message_distant = buffin.readLine();
 
-				System.out.println("Response: "+message_distant);   
+				System.out.println("Response: " + message_distant);
 				
 				//client_distant = buffi
 			}
