@@ -9,6 +9,7 @@ import java.net.UnknownHostException;
 
 
 public class Client {
+	
 
 	public static void main(String[] args) {
 		
@@ -62,9 +63,6 @@ public class Client {
 				e.printStackTrace();
 			}
 
-	}
-	public void connectToServer(){
-		
 	}
 	public void setFileList(){
 		
