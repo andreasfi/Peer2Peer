@@ -25,6 +25,7 @@ public class Client {
 				//get a connection to the server
 				Socket mySocket = new Socket(serverAddress,45000);
 				System.out.println("We got the connexion to  "+ serverAddress);
+				// LOG ->
 				System.out.println("Will read data given by server:\n");
 				
 
@@ -62,5 +63,30 @@ public class Client {
 			}
 
 	}
+	public void connectToServer(){
+		
+	}
+	public void setFileList(){
+		
+	}
+	public void getFileList(){
+		
+	}
+	public void getClientList(){
+		
+	}
+	public void getClientIP(){
+		
+	}
+	public void getFile(){
+		
+	}
+	public void conntectToClient(){
+		
+	}
+	public void acceptClientConnect(){
+		
+	}
+	
 
 }

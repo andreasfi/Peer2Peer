@@ -10,19 +10,17 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.Scanner;
 
-/**
- * Andreas Fischer
- * Peer2Peer
- * 26.04.2016
- * Server.java
- */
-
-/**
- * @author Andreas
- *
- */
 public class Server {
+	/*
+	 * TODO Register new client
+	 * TODO Maintain client list (and their files)
+	 * TODO Give back a client IP and its list of file to another client
+	 * TODO Multiple clients (threads)
+	 * TODO File LOG System (info, warning, severe)
+	 * TODO Log File per month
+	 */
 	public static void main(String[] args) {
+		
 		Socket srvSocket = null ;
 		InetAddress localAddress = null;
 		ServerSocket mySkServer;
