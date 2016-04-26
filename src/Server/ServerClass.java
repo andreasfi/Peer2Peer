@@ -9,8 +9,14 @@ import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Collections;
+
+
 
 public class ServerClass {
 
@@ -104,6 +110,12 @@ public class ServerClass {
 		
 		server.connect();
 		
+		List<SubClient> list = new ArrayList();
+		
+		SubClient Sam = new SubClient("192.168.108.1", "Samu", new ArrayList());
+		SubClient Andi = new SubClient("192.168.108.2", "Andi", new ArrayList());
+		
+		list.add(Sam);
 	}
 	
 }
