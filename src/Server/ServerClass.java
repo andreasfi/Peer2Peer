@@ -3,6 +3,7 @@ package Server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -27,6 +28,7 @@ public class ServerClass {
 	Scanner sc; 
 	int i =0;
 	String interfaceName = "eth1";
+	SubClient client_distant;
 
 
 	public void ServerClass()
@@ -74,17 +76,20 @@ public class ServerClass {
 			String message = "";
 			String message_distant ="";
 			BufferedReader buffin = new BufferedReader (new InputStreamReader (srvSocket.getInputStream()));
+			
 			while(!message_distant.equals("quit")){
 				System.out.println("Your message :");
 				message = sc.nextLine();
 
 				//write the message on the output stream
-				pout.println(message);
-				pout.flush();		
+				pout.println(message);//write the message
+				pout.flush();		//send the message
 
 				message_distant = buffin.readLine();
 
 				System.out.println("Response: "+message_distant);   
+				
+				//client_distant = buffi
 			}
 
 			//Then die
@@ -102,8 +107,8 @@ public class ServerClass {
 			e.printStackTrace();
 		}
 	}
-
-	public static void main(String[] args) {
+	 
+		public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
 		ServerClass server = new ServerClass();
