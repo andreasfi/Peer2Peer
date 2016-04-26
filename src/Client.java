@@ -40,9 +40,7 @@ public class Client {
 				while(!message_distant.equals("quit")){
 					message_distant = buffin.readLine().trim();
 			        
-			        System.out.println(message_distant);
-			        if(message_distant == "open")
-			        	
+			        System.out.println(message_distant);			        	
 			        
 			        pout.println(message_distant);
 					pout.flush();	

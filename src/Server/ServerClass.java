@@ -1,4 +1,5 @@
 package Server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,48 +10,46 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Scanner;
 
-public class Server {
-	/*
-	 * TODO Register new client
-	 * TODO Maintain client list (and their files)
-	 * TODO Give back a client IP and its list of file to another client
-	 * TODO Multiple clients (threads)
-	 * TODO File LOG System (info, warning, severe)
-	 * TODO Log File per month
-	 */
-	public static void main(String[] args) {
-		
-		Socket srvSocket = null ;
-		InetAddress localAddress = null;
-		ServerSocket mySkServer;
-		PrintWriter pout;
-		Scanner sc; 
-		int i =0;
-		String interfaceName = "eth1";
+public class ServerClass {
 
+	Socket srvSocket = null ;
+	InetAddress localAddress = null;
+	ServerSocket mySkServer;
+	PrintWriter pout;
+	Scanner sc; 
+	int i =0;
+	String interfaceName = "eth1";
+
+
+	public void ServerClass()
+	{
+
+	}
+	
+	public void connect()
+	{
 		try {
 
 			NetworkInterface ni = NetworkInterface.getByName(interfaceName);
-	        Enumeration<InetAddress> inetAddresses =  ni.getInetAddresses();
+			Enumeration<InetAddress> inetAddresses =  ni.getInetAddresses();
 			while(inetAddresses.hasMoreElements()) {
-	            InetAddress ia = inetAddresses.nextElement();
-	            
-	            if(!ia.isLinkLocalAddress()) {
-	               if(!ia.isLoopbackAddress()) {
-	            	   System.out.println(ni.getName() + "->IP: " + ia.getHostAddress());
-	            	   localAddress = ia;
-	               }
-	            }   
-            }
-			
+				InetAddress ia = inetAddresses.nextElement();
+
+				if(!ia.isLinkLocalAddress()) {
+					if(!ia.isLoopbackAddress()) {
+						System.out.println(ni.getName() + "->IP: " + ia.getHostAddress());
+						localAddress = ia;
+					}
+				}   
+			}
+
 			//Warning : the backlog value (2nd parameter is handled by the implementation
 			mySkServer = new ServerSocket(45000,10,localAddress);
 
 			//set 3min timeout
-			//mySkServer.setSoTimeout(180000);
+			mySkServer.setSoTimeout(180000);
 
 			System.out.println("Default Timeout :" + mySkServer.getSoTimeout());
 			System.out.println("Usedd IpAddress :" + mySkServer.getInetAddress());
@@ -65,7 +64,7 @@ public class Server {
 
 			//wait for an input from the console 
 			sc = new Scanner(System.in);			  
-			
+
 			String message = "";
 			String message_distant ="";
 			BufferedReader buffin = new BufferedReader (new InputStreamReader (srvSocket.getInputStream()));
@@ -76,10 +75,10 @@ public class Server {
 				//write the message on the output stream
 				pout.println(message);
 				pout.flush();		
-				
-		        message_distant = buffin.readLine();
 
-		        System.out.println("Response: "+message_distant);   
+				message_distant = buffin.readLine();
+
+				System.out.println("Response: "+message_distant);   
 			}
 
 			//Then die
@@ -87,7 +86,7 @@ public class Server {
 			srvSocket.close();
 			mySkServer.close();
 			pout.close();
-			
+
 
 		}catch (SocketException e) {
 
@@ -97,21 +96,16 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
-	
-	public void RegisterClient(){
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		ServerClass server = new ServerClass();
+		
+		server.connect();
 		
 	}
 	
-	public void UpdateClientList(List list){
-		
-	}
-	
-	public void GiveClientIPandFile() {
-		
-	}
-	
-	//create one log file per month
-	public void ToLog(String log){
-		
-	}
 }
+
+
