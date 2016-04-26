@@ -6,7 +6,7 @@ public class SubClient {
 
 	private String IP;
 	private String Name;
-	private List list;
+	private List<String> list;
 	
 	
 	public SubClient(String iP, String name, List list) {
