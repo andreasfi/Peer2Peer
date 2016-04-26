@@ -41,6 +41,8 @@ public class Client {
 					message_distant = buffin.readLine().trim();
 			        
 			        System.out.println(message_distant);
+			        if(message_distant == "open")
+			        	
 			        
 			        pout.println(message_distant);
 					pout.flush();	
