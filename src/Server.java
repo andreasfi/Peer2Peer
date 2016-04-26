@@ -28,7 +28,7 @@ public class Server {
 		PrintWriter pout;
 		Scanner sc; 
 		int i =0;
-		String interfaceName = "192.168.108.10";
+		String interfaceName = "eth1";
 
 		try {
 
