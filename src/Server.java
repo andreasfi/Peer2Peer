@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Scanner;
 
 public class Server {
@@ -94,5 +95,22 @@ public class Server {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void RegisterClient(){
+		
+	}
+	
+	public void UpdateClientList(List list){
+		
+	}
+	
+	public void GiveClientIPandFile() {
+		
+	}
+	
+	//create one log file per month
+	public void ToLog(String log){
+		
 	}
 }
