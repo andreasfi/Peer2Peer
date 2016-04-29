@@ -9,6 +9,7 @@ package client;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.InetAddress;
@@ -34,8 +35,12 @@ public class Client {
 	PrintWriter pout;
 	Socket mySocket;
 	BufferedReader buffin;
+	SubClient me;
+	
 	public Client() {
         serverName = "192.168.108.10";
+        
+        me = new SubClient(myIP, myName, getMyFiles());
 	}
 	
 	public void connectToServer(){
@@ -73,11 +78,23 @@ public class Client {
 			e.printStackTrace();
 		}        
 	}
-	public void sendSubClient(){
-		SubClient me = new SubClient("", myName, new ArrayList<String>());
+	public List<String> getMyFiles(){
+		List<String> fileList = new ArrayList<String>();
 		
-		pout.println(me);
-		pout.flush();
+		return fileList;
+	}
+	public void sendSubClient(){		
+		 try {
+			ObjectOutputStream oos = new ObjectOutputStream(mySocket.getOutputStream());
+			
+			
+			oos.writeObject(me);
+	        oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	public void getClientFileList(){
 		try {
