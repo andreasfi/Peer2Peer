@@ -37,6 +37,8 @@ public class ServerClass {
 	String ipAddress;
 	ObjectInputStream inputStream;
 	ObjectOutputStream outputStream;
+	InputStreamReader isr;
+	String choice;
 
 	public void ServerClass()
 	{
@@ -77,9 +79,7 @@ public class ServerClass {
 			System.out.println(ipAddress + " is connected "+ i++);
 
 			//open the output data stream to write on the client
-			pout = new PrintWriter(srvSocket.getOutputStream());
-
-			//wait for an input from the console 		  
+			pout = new PrintWriter(srvSocket.getOutputStream()); 		  
 
 			inputStream = new ObjectInputStream(srvSocket.getInputStream());
 	        outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
@@ -88,7 +88,9 @@ public class ServerClass {
 			SubClientList.add(in);
 			
 			sendClientList();
-
+			getClientChoice();
+			giveClientIP();
+					
 			//Then die
 			System.out.println("Now dying");
 			srvSocket.close();
@@ -115,6 +117,37 @@ public class ServerClass {
 			
 			outputStream.writeObject(SubList);
 			outputStream.flush();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	public void giveClientIP()
+	{
+		SubClient clientChoosed = (SubClient) SubClientList.get(1);
+		clientChoosed.getIP();
+		
+		try {
+			
+			pout = new PrintWriter(srvSocket.getOutputStream());
+			pout.println(clientChoosed.getIP());
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void getClientChoice()
+	{
+		
+		try {
+			BufferedReader buffin = new BufferedReader (new InputStreamReader (srvSocket.getInputStream()));
+			choice = buffin.readLine();
+			System.out.println(choice);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
