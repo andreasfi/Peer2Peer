@@ -33,7 +33,10 @@ public class ServerClass {
 	int i =0;
 	String interfaceName = "eth1";
 	SubClient client_distant;
-
+	List<SubClient> SubClientList = new ArrayList<SubClient>();
+	String ipAddress;
+	ObjectInputStream inputStream;
+	ObjectOutputStream outputStream;
 
 	public void ServerClass()
 	{
@@ -42,8 +45,6 @@ public class ServerClass {
 	
 	public void connect()
 	{
-		ObjectInputStream inputStream = null;
-		ObjectOutputStream outputStream = null;
 		SubClient in = null;
 		
 		try {
@@ -72,8 +73,10 @@ public class ServerClass {
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
 
 			//wait for client connection		
-			srvSocket = mySkServer.accept(); 			
-			System.out.println("A client is connected :"+ i++);
+			srvSocket = mySkServer.accept(); 	
+			ipAddress = srvSocket.getRemoteSocketAddress().toString();
+			System.out.println(ipAddress + " is connected "+ i++);
+			System.out.println("Chose a name");
 
 			//open the output data stream to write on the client
 			pout = new PrintWriter(srvSocket.getOutputStream());
@@ -89,8 +92,7 @@ public class ServerClass {
 	        outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
 	        
 			in = (SubClient) inputStream.readObject();
-
-			System.out.println(in.getIP());
+			SubClientList.add(in);
 	        	
 			while(!message_distant.equals("quit")){
 				System.out.println("Your message :");
@@ -103,8 +105,6 @@ public class ServerClass {
 				message_distant = buffin.readLine();
 
 				System.out.println("Response: " + message_distant);
-				
-				//client_distant = buffi
 			}
 
 			//Then die
@@ -124,6 +124,22 @@ public class ServerClass {
 			e.printStackTrace();
 		}
 	}
+	
+	public void sendClientList()
+	{
+		try {
+			outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
+			List SubList = SubClientList;
+			
+			outputStream.writeObject(SubList);
+			outputStream.flush();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 	 
 		public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -131,15 +147,8 @@ public class ServerClass {
 		ServerClass server = new ServerClass();
 		
 		server.connect();
+		server.sendClientList();
 		
-		List<SubClient> list = new ArrayList();
-		
-		SubClient Sam = new SubClient("192.168.108.1", "Samu", new ArrayList());
-		SubClient Andi = new SubClient("192.168.108.2", "Andi", new ArrayList());
-		
-		list.add(Sam);
 	}
 	
 }
-
-
