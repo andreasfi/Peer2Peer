@@ -92,6 +92,7 @@ public class Client {
 		return fileList;
 	}
 	public void sendSubClient(){		
+		
 		 try {
 			oos = new ObjectOutputStream(mySocket.getOutputStream());			
 			oos.writeObject(me);
@@ -102,12 +103,13 @@ public class Client {
 		}
 		
 	}
+	@SuppressWarnings("unchecked")
 	public void getClientFileList(){
 		try {
 			
 			ObjectInputStream inputStream = new ObjectInputStream(mySocket.getInputStream());
-			subClientList = (List<SubClient>) inputStream.readObject();
-			
+			Object object = inputStream.readObject();
+			subClientList = (ArrayList<SubClient>) object;
 			subClientList.get(1).getIP();
 			
 		} catch (IOException | ClassNotFoundException e) {
