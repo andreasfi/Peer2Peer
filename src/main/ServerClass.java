@@ -68,7 +68,6 @@ public class ServerClass {
 			//set 3min timeout
 			mySkServer.setSoTimeout(180000);
 
-			System.out.println("Default Timeout :" + mySkServer.getSoTimeout());
 			System.out.println("Usedd IpAddress :" + mySkServer.getInetAddress());
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
 
@@ -76,39 +75,19 @@ public class ServerClass {
 			srvSocket = mySkServer.accept(); 	
 			ipAddress = srvSocket.getRemoteSocketAddress().toString();
 			System.out.println(ipAddress + " is connected "+ i++);
-			System.out.println("Chose a name");
 
 			//open the output data stream to write on the client
 			pout = new PrintWriter(srvSocket.getOutputStream());
 
-			//wait for an input from the console 
-			sc = new Scanner(System.in);			  
+			//wait for an input from the console 		  
 
-			String message = "";
-			String message_distant ="";
-			BufferedReader buffin = new BufferedReader (new InputStreamReader (srvSocket.getInputStream()));
-			
 			inputStream = new ObjectInputStream(srvSocket.getInputStream());
 	        outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
 	        
 			in = (SubClient) inputStream.readObject();
 			SubClientList.add(in);
-	        	
-			sendClientList();
-			while(!message_distant.equals("quit")){
-				System.out.println("Your message :");
-				message = sc.nextLine();
-
-				//write the message on the output stream
-				pout.println(message);//write the message
-				pout.flush();		//send the message
-
-				message_distant = buffin.readLine();
-
-				System.out.println("Response: " + message_distant);
-			}
 			
-
+			sendClientList();
 
 			//Then die
 			System.out.println("Now dying");
@@ -131,10 +110,11 @@ public class ServerClass {
 	public void sendClientList()
 	{
 		try {
-			outputStream = new ObjectOutputStream(srvSocket.getOutputStream());			
-			outputStream.writeObject(SubClientList);
-			outputStream.flush();
+			outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
+			List SubList = SubClientList;
 			
+			outputStream.writeObject(SubList);
+			outputStream.flush();
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -149,7 +129,6 @@ public class ServerClass {
 		ServerClass server = new ServerClass();
 		
 		server.connect();
-		server.sendClientList();
 		
 	}
 	
