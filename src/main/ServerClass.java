@@ -113,9 +113,8 @@ public class ServerClass {
 	{
 		try {
 			outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
-			List SubList = SubClientList;
 			
-			outputStream.writeObject(SubList);
+			outputStream.writeObject(SubClientList);
 			outputStream.flush();
 			
 		} catch (IOException e) {
