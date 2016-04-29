@@ -1,8 +1,9 @@
 package Server;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SubClient {
+public class SubClient implements Serializable{
 
 	private String IP;
 	private String Name;

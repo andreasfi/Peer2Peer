@@ -4,7 +4,7 @@
  * 26.04.2016
  * Client.java
  */
-package client;
+package main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.util.Scanner;
 public class Client {
 	
 	String myName = "Andy Client";
-	String myIP = "192.168.1.101";
+	String myIP = "192.168.1.101Hey";
 	
 	ObjectOutputStream oos;
 	
