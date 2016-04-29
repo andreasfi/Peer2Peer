@@ -94,7 +94,7 @@ public class ServerClass {
 			in = (SubClient) inputStream.readObject();
 			SubClientList.add(in);
 	        	
-			while(!message_distant.equals("quit")){
+			/*while(!message_distant.equals("quit")){
 				System.out.println("Your message :");
 				message = sc.nextLine();
 
@@ -105,7 +105,9 @@ public class ServerClass {
 				message_distant = buffin.readLine();
 
 				System.out.println("Response: " + message_distant);
-			}
+			}*/
+			
+			sendClientList();
 
 			//Then die
 			System.out.println("Now dying");
