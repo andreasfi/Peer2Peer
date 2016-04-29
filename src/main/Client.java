@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ConnectException;
@@ -28,7 +29,9 @@ import java.util.Scanner;
 public class Client {
 	
 	String myName = "Andy Client";
-	String myIP = "192.168.1.101Hey";
+	String myIP = "192.168.1.101";
+	String myPath ="";
+	List<SubClient> subClientList;
 	
 	ObjectOutputStream oos;
 	
@@ -43,7 +46,9 @@ public class Client {
 	public Client() {
         serverName = "192.168.108.10";
         
+        me = new SubClient(myIP, myName, getMyFiles());
         
+        subClientList = new ArrayList<SubClient>();
 	}
 	
 	public void connectToServer(){
@@ -88,10 +93,7 @@ public class Client {
 	}
 	public void sendSubClient(){		
 		 try {
-			oos = new ObjectOutputStream(mySocket.getOutputStream());
-			
-			me = new SubClient(myIP, myName, getMyFiles());
-			
+			oos = new ObjectOutputStream(mySocket.getOutputStream());			
 			oos.writeObject(me);
 	        oos.flush();
 		} catch (IOException e) {
@@ -102,8 +104,13 @@ public class Client {
 	}
 	public void getClientFileList(){
 		try {
-			String message_distant = buffin.readLine().trim();
-		} catch (IOException e) {
+			
+			ObjectInputStream inputStream = new ObjectInputStream(mySocket.getInputStream());
+			subClientList = (List<SubClient>) inputStream.readObject();
+			
+			subClientList.get(1).getIP();
+			
+		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -128,6 +135,7 @@ public class Client {
 		client.sendSubClient();
 		
 		client.getClientFileList();
+		
 		
 		/*
 		String message_distant="";
