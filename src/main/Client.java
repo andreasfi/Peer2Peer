@@ -34,6 +34,7 @@ public class Client {
 	List<SubClient> subClientList;
 	
 	ObjectOutputStream oos;
+	ObjectInputStream ois;
 	
 	Socket clientSocket;
 	InetAddress serverAddress;
@@ -55,7 +56,6 @@ public class Client {
 		try {
 			serverAddress = InetAddress.getByName(serverName);
 			System.out.println("Get the address of the server : "+ serverAddress);
-			//get a connection to the server
 			mySocket = new Socket(serverAddress,45000);
 			System.out.println("We got the connexion to  "+ serverAddress);
 			// LOG ->
@@ -81,6 +81,9 @@ public class Client {
 			//create an input stream to read data from the server
 			buffin = new BufferedReader (new InputStreamReader (mySocket.getInputStream()));			
 			//Read a line from the input buffer coming from the server	
+			oos = new ObjectOutputStream(mySocket.getOutputStream());
+			ois = new ObjectInputStream(mySocket.getInputStream());
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -94,28 +97,32 @@ public class Client {
 	public void sendSubClient(){		
 		
 		 try {
-			oos = new ObjectOutputStream(mySocket.getOutputStream());			
+			
 			oos.writeObject(me);
 	        oos.flush();
+	        oos.reset();
+	        
+	        
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		System.out.println("SubClient sent");
 	}
 	@SuppressWarnings("unchecked")
 	public void getClientFileList(){
 		try {
 			
-			ObjectInputStream inputStream = new ObjectInputStream(mySocket.getInputStream());
-			Object object = inputStream.readObject();
-			subClientList = (ArrayList<SubClient>) object;
-			subClientList.get(1).getIP();
+			
+			subClientList = (ArrayList<SubClient>)ois.readObject();
+			
+			System.out.println(subClientList.get(1).getIP());
 			
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Got Client List");
 	}
 	public void close(){
 		try {
