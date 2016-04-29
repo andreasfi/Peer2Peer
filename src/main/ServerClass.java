@@ -134,6 +134,7 @@ public class ServerClass {
 			
 			pout = new PrintWriter(srvSocket.getOutputStream());
 			pout.println(clientChoosed.getIP());
+			System.out.println("The ip send to connect to the client is " + clientChoosed.getIP());
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -147,7 +148,7 @@ public class ServerClass {
 		try {
 			BufferedReader buffin = new BufferedReader (new InputStreamReader (srvSocket.getInputStream()));
 			choice = buffin.readLine();
-			System.out.println(choice);
+			System.out.println("Your choice is" + choice);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
