@@ -33,6 +33,7 @@ public class ServerClass {
 	int i =0;
 	String interfaceName = "eth1";
 	SubClient client_distant;
+	List<SubClient> SubClientList = new ArrayList<SubClient>();
 
 
 	public void ServerClass()
@@ -72,8 +73,10 @@ public class ServerClass {
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
 
 			//wait for client connection		
-			srvSocket = mySkServer.accept(); 			
-			System.out.println("A client is connected :"+ i++);
+			srvSocket = mySkServer.accept(); 	
+			String ipAddress = srvSocket.getRemoteSocketAddress().toString();
+			System.out.println(ipAddress + " is connected "+ i++);
+			System.out.println("Chose a name");
 
 			//open the output data stream to write on the client
 			pout = new PrintWriter(srvSocket.getOutputStream());
@@ -89,6 +92,10 @@ public class ServerClass {
 	        outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
 	        
 			in = (SubClient) inputStream.readObject();
+			SubClientList.add(in);
+			
+			
+			
 
 	        	
 			while(!message_distant.equals("quit")){
