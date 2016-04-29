@@ -58,6 +58,7 @@ public class Server {
 
 			//wait for client connection		
 			srvSocket = mySkServer.accept(); 			
+			String ipAddress = srvSocket.getRemoteSocketAddress().toString();
 			System.out.println("A client is connected :"+ i++);
 
 			//open the output data stream to write on the client

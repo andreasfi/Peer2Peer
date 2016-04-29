@@ -2,8 +2,10 @@ package Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 
 
 
@@ -38,6 +42,10 @@ public class ServerClass {
 	
 	public void connect()
 	{
+		ObjectInputStream inputStream = null;
+		ObjectOutputStream outputStream = null;
+		SubClient in = null;
+		
 		try {
 
 			NetworkInterface ni = NetworkInterface.getByName(interfaceName);
@@ -77,6 +85,12 @@ public class ServerClass {
 			String message_distant ="";
 			BufferedReader buffin = new BufferedReader (new InputStreamReader (srvSocket.getInputStream()));
 			
+			inputStream = new ObjectInputStream(srvSocket.getInputStream());
+	        outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
+	        
+			in = (SubClient) inputStream.readObject();
+
+	        	
 			while(!message_distant.equals("quit")){
 				System.out.println("Your message :");
 				message = sc.nextLine();
@@ -104,6 +118,8 @@ public class ServerClass {
 			System.out.println("Connection Timed out");
 		}
 		catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
