@@ -16,17 +16,18 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Scanner;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Logger;
 
 import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 
 
 
-public class ServerClass {
+public class ServerClass implements Runnable {
 
-	Socket srvSocket = null ;
-	InetAddress localAddress = null;
+	private Socket srvSocket = null ;
+	private InetAddress localAddress = null;
+	private int serverPort;
 	ServerSocket mySkServer;
 	PrintWriter pout;
 	Scanner sc; 
@@ -35,14 +36,23 @@ public class ServerClass {
 	SubClient client_distant;
 	List<SubClient> SubClientList = new ArrayList<SubClient>();
 	String ipAddress;
-	ObjectInputStream inputStream;
+	InputStream inputStream;
+	ObjectInputStream objectinputstream;
 	ObjectOutputStream outputStream;
 	InputStreamReader isr;
 	String choice;
+	Thread t;
+	
+	Logger server;
 
-	public void ServerClass()
+
+	public ServerClass(InetAddress ipServer, int serverPort, Socket socket, ArrayList<SubClient> listClients)
 	{
-
+		this.localAddress = ipServer;
+		this.serverPort = serverPort;
+		this.srvSocket = socket;
+		this.SubClientList = listClients;
+		this.server = Logger.getLogger("ServerLog");
 	}
 	
 	public void connect()
@@ -66,27 +76,20 @@ public class ServerClass {
 
 			//Warning : the backlog value (2nd parameter is handled by the implementation
 			mySkServer = new ServerSocket(45000,10,localAddress);
-
-			//set 3min timeout
-			mySkServer.setSoTimeout(180000);
-
 			System.out.println("Usedd IpAddress :" + mySkServer.getInetAddress());
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
-
-			//wait for client connection		
-			srvSocket = mySkServer.accept(); 	
+			
+			
+			//wait for client connection			
 			ipAddress = srvSocket.getRemoteSocketAddress().toString();
 			System.out.println(ipAddress + " is connected "+ i++);
-
-			//open the output data stream to write on the client
-			pout = new PrintWriter(srvSocket.getOutputStream()); 		  
-
-			inputStream = new ObjectInputStream(srvSocket.getInputStream());
-	        outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
-	        
-			in = (SubClient) inputStream.readObject();
-			SubClientList.add(in);
-			
+		  
+			try {
+				getObjectFromClient();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			sendClientList();
 			getClientChoice();
 			giveClientIP();
@@ -104,8 +107,34 @@ public class ServerClass {
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
+		}
+	}
+	
+	public void getObjectFromClient() throws ClassNotFoundException
+	{
+		try {
+			System.out.println("Receiving client's informations");
+			inputStream = srvSocket.getInputStream();
+			
+			objectinputstream = new ObjectInputStream(inputStream);
+			SubClient receivedObject = (SubClient)objectinputstream.readObject();
+			
+			if(receivedObject != null)
+			{
+				SubClientList.add(receivedObject);
+				displayArray(SubClientList);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void displayArray(List<SubClient> subClientList)
+	{
+		for(int i = 0;i<subClientList.size(); i++)
+		{
+			System.out.println("The ip address of the file owner is the following : " + subClientList.get(i).getIP());
 		}
 	}
 	
@@ -113,8 +142,9 @@ public class ServerClass {
 	{
 		try {
 			outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
+			List SubList = SubClientList;
 			
-			outputStream.writeObject(SubClientList);
+			outputStream.writeObject(SubList);
 			outputStream.flush();
 			
 		} catch (IOException e) {
@@ -155,14 +185,13 @@ public class ServerClass {
 		}
 
 	}
-	 
-		public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	
 
-		ServerClass server = new ServerClass();
+	@Override
+	public void run() {
 		
-		server.connect();
+		connect();
 		
 	}
-	
+
 }
