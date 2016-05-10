@@ -7,21 +7,17 @@
 package main;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,120 +27,167 @@ import java.util.Scanner;
  *
  */
 public class Client {
-
-	private String serverIp;
-	private int serverPort;
-	List<SubClient> subClientList = new ArrayList<SubClient>();
 	
-	InetAddress myAdress;
-	private String myIp;
-	private String myName;
-	private List<File> myPath;
-	SubClient subclientMe;
+	String myName = "Andy Client";
+	String myIP = "192.168.1.101";
+	String myPath ="";
+	List<SubClient> subClientList;
 	
-	Scanner scanner = new Scanner(System.in);
+	ObjectOutputStream oos;
+	ObjectInputStream ois;
+	
+	Socket clientSocket;
+	InetAddress serverAddress;
+	String serverName;
+	PrintWriter pout;
 	Socket mySocket;
-	ObjectOutputStream objOutStr;
-	ObjectInputStream objInpStr;
+	BufferedReader buffin;
+	SubClient me;
 	
-	public Client(){
-		// UI
+	public Client() {
+        serverName = "192.168.108.10";
+        
+        me = new SubClient(myIP, myName, getMyFiles());
+        
+        subClientList = new ArrayList<SubClient>();
 	}
 	
-	public void connetToServer(String serverIp, int serverPort){
-		this.serverIp = serverIp;
-		this.serverPort = serverPort;
-		
+	public void connectToServer(){
 		try {
-			// Connect to server / Open socket
-			mySocket = new Socket(InetAddress.getByName(serverIp),45000);
-			
-			// Get my IP
-			myAdress = InetAddress.getLocalHost();
-			
-			System.out.println("The client is connected to " + serverIp);
-			
+			serverAddress = InetAddress.getByName(serverName);
+			System.out.println("Get the address of the server : "+ serverAddress);
+			mySocket = new Socket(serverAddress,45000);
+			System.out.println("We got the connexion to  "+ serverAddress);
+			// LOG ->
+			System.out.println("Will read data given by server:\n");	
+		} catch (ConnectException e) {
+			// TODO: handle exception
 		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public void sendSubClient(){
-
-		System.out.println("Path to folder you want to share :");
-		//String pathSharedFolder = scanner.nextLine();
-
-		
-		String pathSharedFolder = "C:\\Users\\Andreas\\Dropbox\\HES-SO Valais\\2_Semester\\Semester 4\\Programmation Distribuée\\Projet\\Darlene\\ProgDistri_Darlene_CyrilS\\src\\client_server";
-		
-		File f = new File(pathSharedFolder);
-		
-		myPath = new ArrayList<File>(Arrays.asList(f.listFiles()));
-		
-		subclientMe = new SubClient(myIp, myName, myPath);
-	}
-	public void sendObjectToServer(){
-		try {
-			OutputStream os = mySocket.getOutputStream();
-			objOutStr = new ObjectOutputStream(os);
-			objOutStr.writeObject(subclientMe);
-			objOutStr.flush();
-			System.out.println("SubClient object sent.");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-	}
-	@SuppressWarnings("unchecked")
-	public void getClientFileList(){
-		try {
-			objOutStr = new ObjectOutputStream(mySocket.getOutputStream());
-			InputStream inputstream = mySocket.getInputStream();
-			objInpStr = new ObjectInputStream(inputstream);
-			// Read the object
-			subClientList = (List<SubClient>) objInpStr.readObject();
-			objOutStr.flush();
-			System.out.println("Object received.");
-			printSubclientList(subClientList);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public void closeConnection(){
-		try {
-			objOutStr.close();
-			objInpStr.close();
-			mySocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	public void printSubclientList(List<SubClient> subclientlist){
-		for (int i = 0; i < subclientlist.size(); i++) {
-			System.out.print("Name:" + subclientlist.get(i).getName());
-			System.out.print("IP:" + subclientlist.get(i).getIP());
-			for (int j = 0; j < subclientlist.get(i).getList().size(); j++) {
-				subclientlist.get(i).getList().get(j).toString();
-			}
-		}
-	}
 	
-	public static void main(String[] args) {
-		Client c = new Client();
-		c.connetToServer("192.168.108.10", 45000);
-		c.sendSubClient();
-		c.sendObjectToServer();
-		c.getClientFileList();
+	public void getClientIP(){
+		
 	}
-
+	public void openStream(){
+		try {
+			pout = new PrintWriter(mySocket.getOutputStream());
+			
+			//create an input stream to read data from the server
+			buffin = new BufferedReader (new InputStreamReader (mySocket.getInputStream()));			
+			//Read a line from the input buffer coming from the server	
+			oos = new ObjectOutputStream(mySocket.getOutputStream());
+			ois = new ObjectInputStream(mySocket.getInputStream());
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}        
+	}
 	public List<String> getMyFiles(){
 		List<String> fileList = new ArrayList<String>();
 		
 		return fileList;
+	}
+	public void sendSubClient(){		
+		
+		 try {
+			
+			oos.writeObject(me);
+	        oos.flush();
+	        oos.reset();
+	        
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("SubClient sent");
+	}
+	@SuppressWarnings("unchecked")
+	public void getClientFileList(){
+		try {
+			
+			
+			subClientList = (ArrayList<SubClient>)ois.readObject();
+			
+			System.out.println(subClientList.get(1).getIP());
+			
+		} catch (IOException | ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("Got Client List");
+	}
+	public void close(){
+		try {
+			System.out.println("\nMessage read. Now dying...");
+			mySocket.close();
+			pout.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public static void main(String[] args) {
+		Client client = new Client();
+		
+		client.connectToServer();
+		
+		client.openStream();
+		
+		client.sendSubClient();
+		
+		client.getClientFileList();
+		
+		
+		/*
+		String message_distant="";
+		while(!message_distant.equals("quit")){
+			try {
+				message_distant = client.buffin.readLine().trim();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        System.out.println(message_distant);
+	        
+	        switch (message_distant) {
+			case "needIP":
+				client.pout.println(message_distant);
+				client.pout.flush();
+				break;
+
+			default:
+				break;
+			}
+	        
+	        client.pout.println(message_distant);
+	        client.pout.flush();	
+		}
+		
+		
+		client.close();
+		*/
+		
+		String message ="";
+		Scanner sc = new Scanner(System.in);			
+		message = sc.nextLine();
+		
+		switch (message) {
+		case "(1)Get File List":
+			
+			break;
+
+		default:
+			break;
+		}
+		
+		
 	}
 }
