@@ -77,7 +77,7 @@ public class Client {
 		//String pathSharedFolder = scanner.nextLine();
 
 		
-		String pathSharedFolder = "C:\\Users\\Andreas\\Dropbox\\HES-SO Valais\\2_Semester\\Semester 4\\Programmation Distribuée\\Projet\\Darlene\\ProgDistri_Darlene_CyrilS\\src\\client_server";
+		String pathSharedFolder = "C:\\temp";
 		File f = new File(pathSharedFolder);
 		myPath = new ArrayList<File>(Arrays.asList(f.listFiles()));
 		subclientMe = new SubClient(myIp, myName, myPath);
