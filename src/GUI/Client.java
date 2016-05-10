@@ -4,7 +4,7 @@
  * 26.04.2016
  * Client.java
  */
-package main;
+package GUI;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,13 +28,13 @@ import java.util.Scanner;
  */
 public class Client {
 	
-	String myName = "Andy Client";
-	String myIP = "192.168.1.101";
-	String myPath ="";
+	protected String myName = "Andy Client";
+	protected String myIP = "192.168.1.101";
+	protected String myPath ="";
+
 	List<SubClient> subClientList;
 	
 	ObjectOutputStream oos;
-	ObjectInputStream ois;
 	
 	Socket clientSocket;
 	InetAddress serverAddress;
@@ -56,10 +56,11 @@ public class Client {
 		try {
 			serverAddress = InetAddress.getByName(serverName);
 			System.out.println("Get the address of the server : "+ serverAddress);
+			//get a connection to the server
 			mySocket = new Socket(serverAddress,45000);
 			System.out.println("We got the connexion to  "+ serverAddress);
 			// LOG ->
-			System.out.println("Will read data given by server:\n");	
+			System.out.println("Will read data given by server:\n");
 		} catch (ConnectException e) {
 			// TODO: handle exception
 		} catch (UnknownHostException e) {
@@ -81,9 +82,6 @@ public class Client {
 			//create an input stream to read data from the server
 			buffin = new BufferedReader (new InputStreamReader (mySocket.getInputStream()));			
 			//Read a line from the input buffer coming from the server	
-			oos = new ObjectOutputStream(mySocket.getOutputStream());
-			ois = new ObjectInputStream(mySocket.getInputStream());
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -97,32 +95,28 @@ public class Client {
 	public void sendSubClient(){		
 		
 		 try {
-			
+			oos = new ObjectOutputStream(mySocket.getOutputStream());			
 			oos.writeObject(me);
 	        oos.flush();
-	        oos.reset();
-	        
-	        
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("SubClient sent");
+		
 	}
 	@SuppressWarnings("unchecked")
 	public void getClientFileList(){
 		try {
 			
-			
-			subClientList = (ArrayList<SubClient>)ois.readObject();
-			
-			System.out.println(subClientList.get(1).getIP());
+			ObjectInputStream inputStream = new ObjectInputStream(mySocket.getInputStream());
+			Object object = inputStream.readObject();
+			subClientList = (ArrayList<SubClient>) object;
+			subClientList.get(1).getIP();
 			
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("Got Client List");
 	}
 	public void close(){
 		try {
@@ -134,7 +128,6 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
-	
 	public static void main(String[] args) {
 		Client client = new Client();
 		

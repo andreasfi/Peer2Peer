@@ -1,4 +1,4 @@
-package main;
+package GUI;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Scanner;
-import java.util.ArrayList;
 import java.util.Collections;
 
 import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
@@ -39,6 +38,7 @@ public class ServerClass {
 	ObjectOutputStream outputStream;
 	InputStreamReader isr;
 	String choice;
+	Thread t;
 
 	public void ServerClass()
 	{
@@ -66,17 +66,16 @@ public class ServerClass {
 
 			//Warning : the backlog value (2nd parameter is handled by the implementation
 			mySkServer = new ServerSocket(45000,10,localAddress);
-
-			//set 3min timeout
-			mySkServer.setSoTimeout(180000);
-
 			System.out.println("Usedd IpAddress :" + mySkServer.getInetAddress());
 			System.out.println("Listening to Port :" + mySkServer.getLocalPort());
-
-			//wait for client connection		
-			srvSocket = mySkServer.accept(); 	
+			t = new Thread(new AcceptClient(mySkServer));
+			t.start();
+			
+			
+			//wait for client connection			
 			ipAddress = srvSocket.getRemoteSocketAddress().toString();
 			System.out.println(ipAddress + " is connected "+ i++);
+
 
 			//open the output data stream to write on the client
 			pout = new PrintWriter(srvSocket.getOutputStream()); 		  
@@ -86,7 +85,6 @@ public class ServerClass {
 	        
 			in = (SubClient) inputStream.readObject();
 			SubClientList.add(in);
-			System.out.println("My ip is " + in.getIP());
 			
 			sendClientList();
 			getClientChoice();
@@ -114,8 +112,9 @@ public class ServerClass {
 	{
 		try {
 			outputStream = new ObjectOutputStream(srvSocket.getOutputStream());
+			List SubList = SubClientList;
 			
-			outputStream.writeObject(SubClientList);
+			outputStream.writeObject(SubList);
 			outputStream.flush();
 			
 		} catch (IOException e) {
@@ -165,5 +164,4 @@ public class ServerClass {
 		server.connect();
 		
 	}
-	
 }
